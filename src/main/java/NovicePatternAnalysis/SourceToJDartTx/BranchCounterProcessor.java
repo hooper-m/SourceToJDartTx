@@ -23,55 +23,58 @@ public class BranchCounterProcessor extends AbstractProcessor<CtBlock<?>> {
 		String branch2 = "";
 
 		List<CtStatement> statementList = body.getStatements();
-		//List<CtStatement> clone = body.getStatements().
-		Queue<CtIfImpl> ifStatementQueue = new LinkedList<>();
+		LinkedList<LinkedList<CtIfImpl>> ifChains = new LinkedList<>();
+		LinkedList<CtIfImpl> chain = new LinkedList<>();
 
 		for (int i = 0; i < statementList.size(); i++) {
 			CtStatement statement = statementList.get(i);
 			if (statement instanceof CtIfImpl) {
-				ifStatementQueue.add((CtIfImpl) statement);
+				chain.add((CtIfImpl) statement);
 			}
-			else if (ifStatementQueue.size() == 1) {
-				ifStatementQueue.clear();
+			else if (chain.size() == 1) {
+				chain.clear();
 			}
-			else if (ifStatementQueue.size() > 0) {
-				processQueue(body, ifStatementQueue);
-				ifStatementQueue.clear();
+			else if (chain.size() > 0) {
+				ifChains.add(chain);
+				chain = new LinkedList<>();
 			}
 		}
-		
-		if (ifStatementQueue.size() > 0) {
-			processQueue(body, ifStatementQueue);
+
+		if (chain.size() > 0) {
+			ifChains.add(chain);
 		}
+
+		processIfChains(body, ifChains);
 		int x = 0;
 	}
-	
-	private void processQueue(CtBlock<?> body, Queue<CtIfImpl> queue) {
+
+	private void processIfChains(CtBlock<?> body, LinkedList<LinkedList<CtIfImpl>> ifChains) {
 		Factory factory = body.getFactory();
-		Iterator<CtIfImpl> iter = queue.iterator();
-		CtIfImpl prev = iter.next();
-		
-		String prevBranch = "branch" + prev.getPosition().getLine();
-		prev.getThenStatement().insertBefore(
-				factory.Code().createCodeSnippetStatement(prevBranch + " = true")); 
-		body.insertBegin(factory.Code().createCodeSnippetStatement("boolean " + prevBranch + " = false"));
-		
-		while (iter.hasNext()) {
-			CtIfImpl curr = iter.next();
-			String currBranch = "branch" + curr.getPosition().getLine();
-			curr.getThenStatement().insertBefore(
-					factory.Code().createCodeSnippetStatement(currBranch + " = true"));
-			body.insertBegin(factory.Code().createCodeSnippetStatement("boolean " + currBranch + " = false"));
-			
-			CtCodeSnippetStatement assertXor = factory.Code().createCodeSnippetStatement("assert " + prevBranch + " ^ " + currBranch);
-			if (body.getLastStatement() instanceof CtReturn<?>) {
-				body.addStatement(body.getStatements().size() - 1, assertXor);
+		for (LinkedList<CtIfImpl> chain : ifChains) {
+			Iterator<CtIfImpl> iter = chain.iterator();
+			CtIfImpl prev = iter.next();
+
+			String prevBranch = "branch" + prev.getPosition().getLine();
+			prev.getThenStatement().insertBefore(factory.Code().createCodeSnippetStatement(prevBranch + " = true"));
+			body.insertBegin(factory.Code().createCodeSnippetStatement("boolean " + prevBranch + " = false"));
+
+			while (iter.hasNext()) {
+				CtIfImpl curr = iter.next();
+				String currBranch = "branch" + curr.getPosition().getLine();
+				curr.getThenStatement().insertBefore(factory.Code().createCodeSnippetStatement(currBranch + " = true"));
+				body.insertBegin(factory.Code().createCodeSnippetStatement("boolean " + currBranch + " = false"));
+
+				CtCodeSnippetStatement assertXor = factory.Code()
+						.createCodeSnippetStatement("assert " + prevBranch + " ^ " + currBranch);
+				if (body.getLastStatement() instanceof CtReturn<?>) {
+					body.addStatement(body.getStatements().size() - 1, assertXor);
+				}
+				else {
+					body.insertEnd(assertXor);
+				}
+
+				prevBranch = currBranch;
 			}
-			else  {
-				body.insertEnd(assertXor);
-			}
-			
-			prevBranch = currBranch;
 		}
 	}
 }

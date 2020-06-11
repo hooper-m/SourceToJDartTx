@@ -39,8 +39,8 @@ public class Examples {
      * A basic example of code to be transformed
      */
     public static int basicExample(int x) {
-        boolean branch45 = false;
         boolean branch48 = false;
+        boolean branch45 = false;
         int y = 0;
         if (x < 0) {
             branch45 = true;
@@ -66,8 +66,8 @@ public class Examples {
      * would be incorrect
      */
     public static int basicExampleNoBraces(int x) {
-        boolean branch67 = false;
         boolean branch69 = false;
+        boolean branch67 = false;
         int y = 0;
         if (x < 0) {
             branch67 = true;
@@ -86,8 +86,8 @@ public class Examples {
      * but the pair of if statements should be
      */
     public static int partialTxExample(int x, int y) {
-        boolean branch90 = false;
         boolean branch93 = false;
+        boolean branch90 = false;
         int z = 0;
         if ((x % 2) == 0) {
             z = 2;
@@ -111,8 +111,11 @@ public class Examples {
      * The transformation should apply to any number of consecutive if statements
      */
     public static int manyConsecutiveIfStatementsExample(int x) {
-        boolean branch114 = false;
         boolean branch117 = false;
+        boolean branch114 = false;
+        boolean branch111 = false;
+        boolean branch108 = false;
+        boolean branch105 = false;
         int y = 0;
         if ((x % 5) == 0) {
             branch105 = true;
@@ -120,16 +123,13 @@ public class Examples {
         }
         if ((x % 5) == 1) {
             branch108 = true;
-            branch108 = true;
             y = 1;
         }
         if ((x % 5) == 2) {
             branch111 = true;
-            branch111 = true;
             y = 2;
         }
         if ((x % 5) == 3) {
-            branch114 = true;
             branch114 = true;
             y = 2;
         }
@@ -137,6 +137,9 @@ public class Examples {
             branch117 = true;
             y = 2;
         }
+        assert branch105 ^ branch108;
+        assert branch108 ^ branch111;
+        assert branch111 ^ branch114;
         assert branch114 ^ branch117;
         return y;
     }
@@ -146,8 +149,10 @@ public class Examples {
      * each with its own variable to count branches executed
      */
     public static int multipleSectionsOfConsecutiveIfStatements(int x, int y) {
-        boolean branch139 = false;
         boolean branch142 = false;
+        boolean branch139 = false;
+        boolean branch133 = false;
+        boolean branch130 = false;
         int z = 0;
         if (x > 0) {
             branch130 = true;
@@ -166,6 +171,7 @@ public class Examples {
             branch142 = true;
             z--;
         }
+        assert branch130 ^ branch133;
         assert branch139 ^ branch142;
         return z;
     }
@@ -175,14 +181,14 @@ public class Examples {
      * regardless of scope depth.
      */
     public static int nestedScopesExample(int x) {
-        boolean branch154 = false;
         boolean branch172 = false;
+        boolean branch154 = false;
         int y = 0;
         if (x > 0) {
             branch154 = true;
             for (int i = 0; i < x; i++) {
-                boolean branch156 = false;
                 boolean branch159 = false;
+                boolean branch156 = false;
                 if ((i % 2) == 0) {
                     branch156 = true;
                     y++;
@@ -191,8 +197,8 @@ public class Examples {
                     branch159 = true;
                     y *= 2;
                     {
-                        boolean branch162 = false;
                         boolean branch165 = false;
+                        boolean branch162 = false;
                         if ((x / i) > 5) {
                             branch162 = true;
                             i++;
@@ -220,8 +226,8 @@ public class Examples {
      * we can still check if the pair are exclusive
      */
     public static int endingElseStatement(int x) {
-        boolean branch184 = false;
         boolean branch187 = false;
+        boolean branch184 = false;
         int y = 0;
         if (x > 0) {
             branch184 = true;
@@ -258,14 +264,18 @@ public class Examples {
      * ...
      */
     public static int elseIfFollowedByIf(int x) {
-        boolean branch219 = false;
         boolean branch225 = false;
+        boolean branch219 = false;
         int y = 0;
         if (x > 0) {
             branch219 = true;
             y = 1;
-        } else if (x < 0) {
-            y = -1;
+        } else {
+            boolean branch222 = false;
+            if (x < 0) {
+                branch222 = true;
+                y = -1;
+            }
         }
         if (x == 0) {
             branch225 = true;
@@ -276,8 +286,9 @@ public class Examples {
     }
 
     public static void lastStatementIsIfStatement(int x) {
-        boolean branch237 = false;
         boolean branch240 = false;
+        boolean branch237 = false;
+        boolean branch234 = false;
         int y = 0;
         if (x > 0) {
             branch234 = true;
@@ -285,13 +296,13 @@ public class Examples {
         }
         if (x < 0) {
             branch237 = true;
-            branch237 = true;
             y = -1;
         }
         if (x == 0) {
             branch240 = true;
             y = 0;
         }
+        assert branch234 ^ branch237;
         assert branch237 ^ branch240;
     }
 
@@ -314,8 +325,12 @@ public class Examples {
         int y = 0;
         if (x > 0) {
             y = 1;
-        } else if (x < 0) {
-            y = -1;
+        } else {
+            boolean branch265 = false;
+            if (x < 0) {
+                branch265 = true;
+                y = -1;
+            }
         }
         return y;
     }
@@ -327,8 +342,8 @@ public class Examples {
      * and re-ordering the if statements would impose a semantic change in the code.
      */
     public static int firstIfHasElseChild(int x) {
-        boolean branch279 = false;
         boolean branch285 = false;
+        boolean branch279 = false;
         int y = 0;
         if (x > 0) {
             branch279 = true;
@@ -349,8 +364,8 @@ public class Examples {
      * we should ignore and leave the code as-is
      */
     public static int ifReturnsExample(int x) {
-        boolean branch296 = false;
         boolean branch299 = false;
+        boolean branch296 = false;
         if (x < 0) {
             branch296 = true;
             return 1;
