@@ -26,14 +26,21 @@ public class BranchCounterProcessor extends AbstractProcessor<CtBlock<?>> {
 			if (statement instanceof CtIfImpl) {				
 				CtIfImpl ifStatement = (CtIfImpl) statement;
 				chain.add(ifStatement);
+				CtBlock<?> elseStatement = ifStatement.getElseStatement();
 				
-				if (ifStatement.getElseStatement() != null) {
-					if (chain.size() == 1) {
-						chain.clear();
-					}
+				if (elseStatement != null) {
+//					if (chain.size() == 1) {
+//						chain.clear();
+//					}
 					if (chain.size() > 1) {
-						ifChains.add(chain);
-						chain = new LinkedList<>();
+						ifChains.add(chain);						
+					}
+					
+					chain = new LinkedList<>();
+					
+					if (elseStatement.getStatements().size() == 1
+						&& elseStatement.getStatement(0) instanceof CtIfImpl) {
+						chain.add((CtIfImpl) elseStatement.getStatement(0));
 					}
 				}
 			}
