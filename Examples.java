@@ -229,6 +229,51 @@ public class Examples {
 		return y;
 	}
 	
+	public static elseIfFollowedByIfBraces(int x) {
+		int y = 0;
+		
+		if (x > 0) {
+			y = 1;
+		}
+		else {
+			if (x < 0) {
+				y = -1;
+			}
+		}
+		if (x == 0) {
+			y = 0;
+		}
+		
+		return y;
+	}
+	
+	public static int depthTest(int x) {
+		int y = 0;
+		if (x < 0) {
+			y = 2;
+		}
+		if (x > 0) {
+			y = 1;
+		}
+		else if (x == 2) {
+			x = 1;
+		}
+		else if (x == 3) {
+			x = 2;
+		}
+		else if (x == 4) {
+			x = 3;
+		}
+		if (x == 0) {
+			y = 0;
+		}
+		if (x == 3) {
+			x = 3;
+		}
+		
+		return y;
+	}
+	
 	public static void lastStatementIsIfStatement(int x) {
 		int y = 0;
 		if (x > 0) {
@@ -285,6 +330,68 @@ public class Examples {
 		if (x == 0) {
 			y--;
 		}
+		return y;
+	}
+	
+	public static int noTx1(int x) {
+		int y = 0;
+		
+		if (x > 0) {
+			y = 1;
+		}
+		else {
+			y++;
+			if (x < 0) {		
+				y = -1;
+			}
+		}
+		if (x == 0) {
+			y = 0;
+		}
+		
+		return y;
+	}
+	
+	public static int noTx2(int x) {
+		int y = 0;
+		
+		if (x > 0) {
+			y = 1;
+		}
+		else {
+			if (x < 0) {		
+				y = -1;
+			}
+			y++;
+		}
+		if (x == 0) {
+			y = 0;
+		}
+		
+		return y;
+	}
+	
+	public static int depthTestNoTx(int x) {
+		int y = 0;
+		if (x < 0) {
+			y = 2;
+		}
+		else if (x == 2) {
+			x = 1;
+		}
+		else if (x == 3) {
+			x = 2;
+		}
+		else if (x == 4) {
+			x = 3;
+		}
+		else {
+			x = 4;
+		}
+		if (x == 0) {
+			y = 0;
+		}
+		
 		return y;
 	}
 	

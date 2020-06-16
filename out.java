@@ -264,24 +264,15 @@ public class Examples {
      * ...
      */
     public static int elseIfFollowedByIf(int x) {
-        boolean branch225 = false;
-        boolean branch219 = false;
         int y = 0;
         if (x > 0) {
-            branch219 = true;
             y = 1;
-        } else {
-            boolean branch222 = false;
-            if (x < 0) {
-                branch222 = true;
-                y = -1;
-            }
+        } else if (x < 0) {
+            y = -1;
         }
         if (x == 0) {
-            branch225 = true;
             y = 0;
         }
-        assert branch219 ^ branch225;
         return y;
     }
 
@@ -325,12 +316,8 @@ public class Examples {
         int y = 0;
         if (x > 0) {
             y = 1;
-        } else {
-            boolean branch265 = false;
-            if (x < 0) {
-                branch265 = true;
-                y = -1;
-            }
+        } else if (x < 0) {
+            y = -1;
         }
         return y;
     }
@@ -342,20 +329,15 @@ public class Examples {
      * and re-ordering the if statements would impose a semantic change in the code.
      */
     public static int firstIfHasElseChild(int x) {
-        boolean branch285 = false;
-        boolean branch279 = false;
         int y = 0;
         if (x > 0) {
-            branch279 = true;
             y = 1;
         } else {
             y = 2;
         }
         if (x == 0) {
-            branch285 = true;
             y--;
         }
-        assert branch279 ^ branch285;
         return y;
     }
 

@@ -23,19 +23,42 @@ public class BranchCounterProcessor extends AbstractProcessor<CtBlock<?>> {
 
 		for (int i = 0; i < statementList.size(); i++) {
 			CtStatement statement = statementList.get(i);
-			if (statement instanceof CtIfImpl) {
-				chain.add((CtIfImpl) statement);
+			if (statement instanceof CtIfImpl) {				
+				CtIfImpl ifStatement = (CtIfImpl) statement;
+				chain.add(ifStatement);
+				CtBlock<?> elseStatement = ifStatement.getElseStatement();
+				
+				if (elseStatement != null) {
+					if (chain.size() > 1) {
+						ifChains.add(chain);						
+					}
+					
+					chain = new LinkedList<>();
+					
+					while (elseStatement.getStatements().size() == 1
+						&& elseStatement.getStatement(0) instanceof CtIfImpl) {
+						CtIfImpl childIfStatement = (CtIfImpl) elseStatement.getStatement(0);
+						
+						if (childIfStatement.getElseStatement() != null) {
+							elseStatement = childIfStatement.getElseStatement();
+						}
+						else {
+							chain.add(childIfStatement);
+							break;
+						}
+					}
+				}
 			}
 			else if (chain.size() == 1) {
 				chain.clear();
 			}
-			else if (chain.size() > 0) {
+			else if (chain.size() > 1) {
 				ifChains.add(chain);
 				chain = new LinkedList<>();
 			}
 		}
 
-		if (chain.size() > 0) {
+		if (chain.size() > 1) {
 			ifChains.add(chain);
 		}
 
