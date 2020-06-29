@@ -58,22 +58,9 @@ public class BranchCounterProcessor extends AbstractProcessor<CtBlock<?>> {
 					
 					chain = new LinkedList<>();
 					
-//					CtIfImpl deepestElseIfChild = findDeepestElseIfStatement(elseStatement);
-//					if (deepestElseIfChild != null) {
-//						chain.add(deepestElseIfChild);
-//					}
-					
-					while (elseStatement.getStatements().size() == 1
-						   && elseStatement.getStatement(0) instanceof CtIfImpl) {
-						CtIfImpl childIfStatement = (CtIfImpl) elseStatement.getStatement(0);
-						
-						if (childIfStatement.getElseStatement() != null) {
-							elseStatement = childIfStatement.getElseStatement();
-						}
-						else {
-							chain.add(childIfStatement);
-							break;
-						}
+					CtIfImpl deepestElseIfChild = findDeepestElseIfStatement(elseStatement);
+					if (deepestElseIfChild != null) {
+						chain.add(deepestElseIfChild);
 					}
 				}
 			}
@@ -106,10 +93,6 @@ public class BranchCounterProcessor extends AbstractProcessor<CtBlock<?>> {
 			return childIfStatement.getElseStatement() == null ?
 				   childIfStatement :
 				   findDeepestElseIfStatement(childIfStatement.getElseStatement());
-//			if (childIfStatement.getElseStatement() == null) {
-//				return childIfStatement;
-//			}
-//			return findDeepestElseIfStatement(childIfStatement.getElseStatement());
 		}
 
 		return null;

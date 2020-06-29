@@ -29,7 +29,7 @@ public class App {
 //		System.out.println(asgSubmittor);
 //		l.addInputResource(src.toString());
 		
-		l.addInputResource("test.java");
+		l.addInputResource("Examples.java");
 		
 		BranchCounterProcessor processor = new BranchCounterProcessor();
 		l.addProcessor(processor);
