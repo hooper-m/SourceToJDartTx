@@ -29,19 +29,27 @@ public class App {
 //		System.out.println(asgSubmittor);
 //		l.addInputResource(src.toString());
 		
-		l.addInputResource("Examples.java");
+		l.addInputResource("examples\\Examples.java");
 		
 		BranchCounterProcessor processor = new BranchCounterProcessor();
 		l.addProcessor(processor);
 		CtModel model = l.buildModel();
 		l.process();
 		
+//		if (processor.isModified()) {
+//			//try(FileWriter out = new FileWriter(args[1] + "\\" + asgSubmittor + "Tx.java")) {
+//			//try(FileWriter out = new FileWriter("C:\\Users\\Udnamtam\\Documents\\shool\\Research\\pattern-detection\\transformed_submissions" + "\\" + asgSubmittor + "Tx.java")) {
+//			try (FileWriter out = new FileWriter("out.java")) {
+//				for (CtType<?> t : model.getAllTypes()) {
+//					//System.out.println(t);
+//					out.write(t.toString());
+//				}
+//			}
+//		}
+		
 		if (processor.isModified()) {
-			//try(FileWriter out = new FileWriter(args[1] + "\\" + asgSubmittor + "Tx.java")) {
-			//try(FileWriter out = new FileWriter("C:\\Users\\Udnamtam\\Documents\\shool\\Research\\pattern-detection\\transformed_submissions" + "\\" + asgSubmittor + "Tx.java")) {
-			try (FileWriter out = new FileWriter("out.java")) {
-				for (CtType<?> t : model.getAllTypes()) {
-					//System.out.println(t);
+			for (CtType<?> t : model.getAllTypes()) {
+				try (FileWriter out = new FileWriter("tx\\" + t.getSimpleName() + "Tx.java")) {
 					out.write(t.toString());
 				}
 			}
