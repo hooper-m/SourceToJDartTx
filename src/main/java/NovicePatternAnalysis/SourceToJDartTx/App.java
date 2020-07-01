@@ -17,19 +17,19 @@ public class App {
     public static void main( String[] args ) throws IOException {
 		Launcher l = new Launcher();
 		// In the final version, paths to source files will be passed as command line arguments.
-//		Path src = Paths.get(args[0]);
+		Path src = Paths.get(args[0]);
 //				Paths.get("C:\\Users\\Udnamtam\\Documents\\shool\\Research\\pattern-detection\\stripped_submissions\\"
 //				+ "Assignment7\\Possum"
 //				+ "\\src\\assignment7");
 		
-//		String asgSubmittor = src.getName(src.getNameCount() - 2).toString() 
-//							+ "_"
-//							+ src.getName(src.getNameCount() - 1).toString();
-//
-//		System.out.println(asgSubmittor);
-//		l.addInputResource(src.toString());
+		String asgSubmittor = src.getName(src.getNameCount() - 2).toString() 
+							+ "_"
+							+ src.getName(src.getNameCount() - 1).toString();
+
+		System.out.println(asgSubmittor);
+		l.addInputResource(src.toString());
 		
-		l.addInputResource("examples\\Examples.java");
+//		l.addInputResource("examples\\Examples.java");
 		
 		BranchCounterProcessor processor = new BranchCounterProcessor();
 		l.addProcessor(processor);
@@ -37,23 +37,23 @@ public class App {
 		l.process();
 		
 //		if (processor.isModified()) {
-//			//try(FileWriter out = new FileWriter(args[1] + "\\" + asgSubmittor + "Tx.java")) {
-//			//try(FileWriter out = new FileWriter("C:\\Users\\Udnamtam\\Documents\\shool\\Research\\pattern-detection\\transformed_submissions" + "\\" + asgSubmittor + "Tx.java")) {
-//			try (FileWriter out = new FileWriter("out.java")) {
+//			try(FileWriter out = new FileWriter(args[1] + "\\" + asgSubmittor + "Tx.java")) {
 //				for (CtType<?> t : model.getAllTypes()) {
-//					//System.out.println(t);
 //					out.write(t.toString());
 //				}
 //			}
 //		}
+//		else {
+//			System.out.println("- no chains found");
+//		}
 		
-		if (processor.isModified()) {
-			for (CtType<?> t : model.getAllTypes()) {
-				try (FileWriter out = new FileWriter("tx\\" + t.getSimpleName() + "Tx.java")) {
-					out.write(t.toString());
-				}
-			}
-		}
-		System.out.println("done");
+//		if (processor.isModified()) {
+//			for (CtType<?> t : model.getAllTypes()) {
+//				try (FileWriter out = new FileWriter("tx\\" + t.getSimpleName() + "Tx.java")) {
+//					out.write(t.toString());
+//				}
+//			}
+//		}
+//		System.out.println("done");
     }
 }
