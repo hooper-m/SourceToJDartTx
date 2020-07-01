@@ -48,21 +48,22 @@ public class BranchCounterProcessor extends AbstractProcessor<CtBlock<?>> {
 		}
 		
 		public void process() {
+			modified = false;
 			for (CtStatement statement : body.getStatements()) {
-				if (statement instanceof CtIf) {
-					processIfStatement((CtIf) statement);
+				if (isPartOfIfChain(statement)) {
+					CtIf ifStatement = (CtIf) statement;
+					currentChain.add(ifStatement);
+					CtStatement elseStatement = ifStatement.getElseStatement();
+					if (elseStatement instanceof CtBlock<?>) {
+						startNewIfChain((CtBlock<?>) elseStatement);
+					}
 				}
 				else if (currentChain.size() > 0) {
-					if (currentChain.size() > 1) {
-						addChain();
-					}
-					currentChain = new LinkedList<>();
+					completeCurrentChain();
 				}
 			}
 			
-			if (currentChain.size() > 1) {
-				addChain();
-			}
+			completeCurrentChain();
 			
 			if (allChains.size() > 0) {
 				insertNewStatements();
@@ -70,36 +71,33 @@ public class BranchCounterProcessor extends AbstractProcessor<CtBlock<?>> {
 			}
 		}
 		
-		private void addChain() {
-			allChains.add(currentChain);
-			if (LOG) {
-				printParentClassAndLineNumber(currentChain.getFirst());
+		private boolean isPartOfIfChain(CtStatement statement) {
+			if (!(statement instanceof CtIf)) {
+				return false;
 			}
-		}
-		
-		private void processIfStatement(CtIf ifStatement) {
+			CtIf ifStatement = (CtIf) statement;
 			if (ifStatement.getThenStatement() == null) {
 				CtBlock<?> noOpBlock = new CtBlockImpl<>();
 				noOpBlock.insertBegin(factory.createCodeSnippetStatement(""));
 				ifStatement.setThenStatement(noOpBlock);
 			}
-			if (!containsBranchingControlFlowStatements(ifStatement.getThenStatement())) {
-				currentChain.add(ifStatement);
-			}
 			
-			CtStatement elseStatement = ifStatement.getElseStatement();
-			
-			if (elseStatement instanceof CtBlock<?>) {
-				processElseStatement((CtBlock<?>) elseStatement);
-			}
+			return !containsBranchingControlFlowStatements(ifStatement.getThenStatement());
 		}
-		
-		private void processElseStatement(CtBlock<?> elseStatement) {
+
+		private void completeCurrentChain() {
 			if (currentChain.size() > 1) {
-				addChain();				
+				allChains.add(currentChain);
+				if (LOG) {
+					printParentClassAndLineNumber(currentChain.getFirst());
+				}
 			}
 			
 			currentChain = new LinkedList<>();
+		}
+		
+		private void startNewIfChain(CtBlock<?> elseStatement) {
+			completeCurrentChain();
 			
 			CtIf deepestElseIfChild = findDeepestElseIfStatement(elseStatement);
 			if (deepestElseIfChild != null) {
@@ -159,15 +157,17 @@ public class BranchCounterProcessor extends AbstractProcessor<CtBlock<?>> {
 	}
 	
 	private CtIf findDeepestElseIfStatement(CtBlock<?> elseStatement) {
-		if (elseStatement.getStatements().size() == 1
-			&& elseStatement.getStatement(0) instanceof CtIf) {
-			
+		while (elseStatement.getStatements().size() == 1
+				&& elseStatement.getStatement(0) instanceof CtIf) {
 			CtIf childIfStatement = (CtIf) elseStatement.getStatement(0);
-			return childIfStatement.getElseStatement() == null
-				   ? childIfStatement
-				   : findDeepestElseIfStatement(childIfStatement.getElseStatement());
+			if (childIfStatement.getElseStatement() == null) {
+				return childIfStatement;
+			}
+			else {
+				elseStatement = childIfStatement.getElseStatement();
+			}
 		}
-
+		
 		return null;
 	}
 	

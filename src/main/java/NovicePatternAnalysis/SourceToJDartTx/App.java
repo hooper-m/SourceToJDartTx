@@ -36,16 +36,16 @@ public class App {
 		CtModel model = l.buildModel();
 		l.process();
 		
-//		if (processor.isModified()) {
-//			try(FileWriter out = new FileWriter(args[1] + "\\" + asgSubmittor + "Tx.java")) {
-//				for (CtType<?> t : model.getAllTypes()) {
-//					out.write(t.toString());
-//				}
-//			}
-//		}
-//		else {
-//			System.out.println("- no chains found");
-//		}
+		if (processor.isModified()) {
+			try(FileWriter out = new FileWriter(/*args[1] + */"tx\\" + asgSubmittor + "Tx.java")) {
+				for (CtType<?> t : model.getAllTypes()) {
+					out.write(t.toString());
+				}
+			}
+		}
+		else {
+			System.out.println("- no chains found");
+		}
 		
 //		if (processor.isModified()) {
 //			for (CtType<?> t : model.getAllTypes()) {
