@@ -37,7 +37,7 @@ public class App {
 		l.process();
 		
 		if (processor.isModified()) {
-			try(FileWriter out = new FileWriter(/*args[1] + */"tx\\" + asgSubmittor + "Tx.java")) {
+			try(FileWriter out = new FileWriter(args[1] + "\\" + asgSubmittor + "Tx.java")) {
 				for (CtType<?> t : model.getAllTypes()) {
 					out.write(t.toString());
 				}
